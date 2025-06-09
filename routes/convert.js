@@ -8,7 +8,7 @@ const PDFDocument = require('pdfkit');
 const router = express.Router();
 
 require('dotenv').config();
-const CLOUDMERSIVE_API_KEY = process.env.CLOUDMERSIVE_API_KEY; // Ganti dengan API key Cloudmersive kamu
+const CLOUDMERSIVE_API_KEY = process.env.CLOUDMERSIVE_API_KEY;
 
 router.post('/word-to-pdf', async (req, res) => {
   const { fileName } = req.body;

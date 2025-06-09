@@ -7,6 +7,7 @@ function Halaman() {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [notif, setNotif] = useState('');
+  const [isLoadingJpg, setIsLoadingJpg] = useState(false); // Tambahkan state baru
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
@@ -185,7 +186,10 @@ function Halaman() {
     }
 
     try {
-      setIsLoading(true);
+      // Tambahkan delay 0.5 detik sebelum setIsLoadingJpg(true)
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setIsLoadingJpg(true);
+
       const response = await fetch('http://localhost:5000/api/convert/jpg-to-pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -205,7 +209,7 @@ function Halaman() {
       console.error('Konversi gagal:', error);
       alert('Konversi gagal: ' + error.message);
     } finally {
-      setIsLoading(false);
+      setIsLoadingJpg(false); // Reset loading JPG
     }
   };
 
@@ -235,9 +239,22 @@ function Halaman() {
         <p className="halaman-subtitle">Pilih File converter kamu!</p>
 
         <div className="button-container">
-          <button className="convert-button" onClick={handleConvertWordToPdf}>Word To PDF</button>
-          <button className="convert-button" onClick={handleConvertExcelToPdf}>Excel To PDF</button>
-          <button className="convert-button" onClick={handleConvertJpgToPdf}>JPG To PDF</button>
+          <button className="convert-button" onClick={handleConvertWordToPdf} disabled={isLoading || isLoadingJpg}>Word To PDF</button>
+          <button className="convert-button" onClick={handleConvertExcelToPdf} disabled={isLoading || isLoadingJpg}>Excel To PDF</button>
+          <button
+            className="convert-button"
+            onClick={handleConvertJpgToPdf}
+            disabled={isLoadingJpg || isLoading}
+          >
+            {isLoadingJpg ? (
+              <>
+                <span className="loading-spinner" style={{ marginRight: 8 }} />
+                Tunggu sebentar...
+              </>
+            ) : (
+              'JPG To PDF'
+            )}
+          </button>
         </div>
 
         <div className="uploaded-files">
@@ -249,7 +266,7 @@ function Halaman() {
           ))}
         </div>
 
-        {isLoading && <div className="loading-spinner">Loading...</div>}
+        {isLoading && <div className="loading-spinner">Loading</div>}
 
         {isLoggedIn && (
           <>
