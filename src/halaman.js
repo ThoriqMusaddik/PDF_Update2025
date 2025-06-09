@@ -99,15 +99,21 @@ function Halaman() {
     }
   };
 
-  const handleConvertWordToPdf = async () => {
+  // Tambahkan fungsi pengecekan guest limit
+  const checkGuestLimit = () => {
     if (!isLoggedIn) {
       const count = Number(localStorage.getItem('guestConvertCount') || 0);
       if (count >= 1) {
-        setNotif('di harapkan login dulu bro');
-        return;
+        setNotif('maaf login dulu bro');
+        return false;
       }
       localStorage.setItem('guestConvertCount', count + 1);
     }
+    return true;
+  };
+
+  const handleConvertWordToPdf = async () => {
+    if (!checkGuestLimit()) return;
 
     if (!uploadedFiles.length) return alert('Pilih file dulu!');
     const fileMeta = uploadedFiles[0];
@@ -143,6 +149,8 @@ function Halaman() {
   };
 
   const handleConvertExcelToPdf = async () => {
+    if (!checkGuestLimit()) return;
+
     if (!uploadedFiles.length) return alert('Pilih file dulu!');
     const fileMeta = uploadedFiles[0];
     const allowedExtensions = ['xls', 'xlsx'];
@@ -177,6 +185,8 @@ function Halaman() {
   };
 
   const handleConvertJpgToPdf = async () => {
+    if (!checkGuestLimit()) return;
+
     if (!uploadedFiles.length) return alert('Pilih file dulu!');
     const fileMeta = uploadedFiles[0];
     const allowedExtensions = ['jpg', 'jpeg'];
